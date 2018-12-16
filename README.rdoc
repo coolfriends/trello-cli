@@ -12,6 +12,16 @@ Create a card with some labels.
                          --description "Read this thang"
                          --label-names Once,Urgent
 
+Create a sequence of cards
+
+  for n in $(seq 1 14)
+  do
+      trello-cli card create --board-name  Ruby
+                             --list-name   Inbox
+                             --card-name   "Design Patterns - Chapter $n"
+                             --description "Read this chapter."
+                             --label-names Once,Urgent
+  done
 
 
 :include:trello-cli.rdoc
