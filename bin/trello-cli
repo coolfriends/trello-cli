@@ -48,7 +48,6 @@ class App
       create.flag 'description', :arg_name => 'description',
                                  :type => String,
                                  :desc => 'The name of the card.'
-      # TODO: Implement adding labels
 
       create.action do |global_options, options, args|
         public_key = ENV['TRELLO_DEVELOPER_PUBLIC_KEY']

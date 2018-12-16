@@ -4,6 +4,12 @@ CLI for interacting with Trello.
 
 == Usage
 
+Set your environment variables.
+
+  export TRELLO_DEVELOPER_PUBLIC_KEY=mykey
+  export TRELLO_MEMBER_TOKEN=mytoken
+  export TRELLO_USERNAME=kbougy
+
 Create a card with some labels.
 
   trello-cli card create --board-name Ruby
