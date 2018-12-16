@@ -1,0 +1,108 @@
+#!/usr/bin/env ruby
+require 'gli'
+require 'trello'
+require 'pry'
+begin # XXX: Remove this begin/rescue before distributing your app
+require 'trello-cli'
+rescue LoadError
+  STDERR.puts "In development, you need to use `bundle exec bin/trello-cli` to run your app"
+  STDERR.puts "At install-time, RubyGems will make sure lib, etc. are in the load path"
+  STDERR.puts "Feel free to remove this message from bin/trello-cli now"
+  exit 64
+end
+
+class App
+  extend GLI::App
+
+  program_desc 'Interact with trello from the command line.'
+
+  version TrelloCli::VERSION
+
+  subcommand_option_handling :normal
+  arguments :strict
+
+  desc 'Perform operation on a Trello card.'
+  command :card do |card|
+
+    card.desc 'Create a new Trello card.'
+    card.command :create do |create|
+      create.flag 'board-name', :arg_name => 'board_name',
+                                :aliases => ['b'],
+                                :required => true,
+                                :type => String,
+                                :desc => 'The board the card will belong to.'
+      create.flag 'list-name', :arg_name => 'list_name',
+                               :required => true,
+                               :type => String,
+                               :desc => 'The list the card will belong to.'
+      create.flag 'card-name', :arg_name => 'card_name',
+                               :required => true,
+                               :type => String,
+                               :desc => 'The name of the card.'
+      create.flag 'label-names',
+                  arg_name: 'label_names',
+                  default_value: [],
+                  type: Array,
+                  desc: 'The names of labels.'
+
+      create.flag 'description', :arg_name => 'description',
+                                 :type => String,
+                                 :desc => 'The name of the card.'
+      # TODO: Implement adding labels
+
+      create.action do |global_options, options, args|
+        public_key = ENV['TRELLO_DEVELOPER_PUBLIC_KEY']
+        member_token = ENV['TRELLO_MEMBER_TOKEN']
+        username = ENV['TRELLO_USERNAME']
+        Trello.configure do |config|
+          config.developer_public_key = public_key
+          config.member_token = member_token
+        end
+
+        board_name = options['board-name']
+        list_name = options['list-name']
+        card_name = options['card-name']
+        label_names = options['label-names'] || []
+        description = options['description'] || nil
+
+        user = Trello::Member.find(username)
+
+        board = user.boards.find { |b| b.name ==  board_name }
+        list = board.lists.find { |l| l.name == list_name }
+        label_ids = label_names.map do |name|
+          board.labels.find { |l| l.name == name }.id
+        end.join(',')
+
+        card = Trello::Card.create(
+          name: card_name,
+          list_id: list.id,
+          desc: description,
+          card_labels: label_ids
+        )
+      end
+    end
+  end
+
+  pre do |global,command,options,args|
+    # Pre logic here
+    # Return true to proceed; false to abort and not call the
+    # chosen command
+    # Use skips_pre before a command to skip this block
+    # on that command only
+    true
+  end
+
+  post do |global,command,options,args|
+    # Post logic here
+    # Use skips_post before a command to skip this
+    # block on that command only
+  end
+
+  on_error do |exception|
+    # Error logic here
+    # return false to skip default error handling
+    true
+  end
+end
+
+exit App.run(ARGV)

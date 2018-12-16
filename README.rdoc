@@ -1,0 +1,18 @@
+== trello-cli
+
+CLI for interacting with Trello.
+
+== Usage
+
+Create a card with some labels.
+
+  trello-cli card create --board-name Ruby
+                         --list-name  Inbox
+                         --card-name  "Design Patterns - Chapter 1"
+                         --description "Read this thang"
+                         --label-names Once,Urgent
+
+
+
+:include:trello-cli.rdoc
+

@@ -1,0 +1,5 @@
+= trello-cli
+
+Generate this with
+    trello-cli _doc
+After you have described your command line interface
