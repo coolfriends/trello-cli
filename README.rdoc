@@ -29,6 +29,17 @@ Create a sequence of cards
                              --label-names Once,Urgent
   done
 
+Create a sequence of cards in reverse
+
+  for n in $(ruby -e "(1..14).reverse_each { |i| puts i }")
+  do
+      trello-cli card create --board-name  Ruby
+                             --list-name   Inbox
+                             --card-name   "Design Patterns - Chapter $n"
+                             --description "Read this chapter."
+                             --label-names Once,Urgent
+  done
+
 
 :include:trello-cli.rdoc
 
